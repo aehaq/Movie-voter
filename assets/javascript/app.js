@@ -12,14 +12,14 @@ firebase.initializeApp(config);
 var database = firebase.database();
 
 
-// This function takes a train listed in the database, and prints it's associated info onto the table.
+// This function takes a movie listed in the database, and prints it's associated info onto the table.
 function listMovies(movieSnapshot) {
     var name = movieSnapshot.name;
     var genre = movieSnapshot.genre;
     var sellingPoint = movieSnapshot.sellingPoint;
     var votes = movieSnapshot.votes;
-    
-    console.log(movieSnapshot)
+    var id = movieSnapshot.id;
+
     // We create a new row to append the information associated wth the current .
     var newRow = $('<tr>')
 
@@ -41,7 +41,7 @@ function listMovies(movieSnapshot) {
     newRow.append(votesCell);
     
     var castCell = $('<td scope="row">')
-    var button = $(`<button class="btn btn-success" data-key=${movieSnapshot.key}>`)
+    var button = $(`<button class="btn btn-success vote-button" data-key=${id}>`)
     button.text("VOTE!")
     castCell.append(button)
     newRow.append(castCell);
@@ -50,7 +50,7 @@ function listMovies(movieSnapshot) {
     $('#movies-here').append(newRow);
 };
 
-// This function is used to render the list of trains without making changes to firebase
+// This function is used to render the list of movies without making changes to firebase
 function render() {
 
     // This rerenders the information in the database and takes a snapshot of the whole thing as an object.
@@ -59,10 +59,10 @@ function render() {
         // We must empty the table out since we will work through the entire database again.
         $('#movies-here').empty();
 
-        // Here we narrow our scope to an object containing all of the trains.
+        // Here we narrow our scope to an object containing all of the movies.
         var moviesObject = snapshot.val();
 
-        // We then iterate through the trains on the list and add each batch of information to the table
+        // We then iterate through the movies on the list and add each batch of information to the table
         for (key in moviesObject) {
             listMovies(moviesObject[key]);
         }
@@ -70,14 +70,14 @@ function render() {
 }
 
     
-    // This function calls the list train function when a change is made to the database.
-    // When the page loads, this function is run once automatically, and filters through every single train as though it was newly added. 
+    // This function calls the list movie function when a change is made to the database.
+    // When the page loads, this function is run once automatically, and filters through every single movie as though it was newly added. 
     database.ref().on("child_added", function(snapshot) {
         listMovies(snapshot.val());
     });
 
-    // This function is run when users want to add train information to the list.
-    // It pushes the train into the database, triggering the child added function which sprints them on the page.
+    // This function is run when users want to add movie information to the list.
+    // It pushes the movie into the database, triggering the child added function which sprints them on the page.
     $("#submit").on("click", function() {
         event.preventDefault();
         
@@ -102,7 +102,30 @@ function render() {
         };
     });
 
-    // In order to keep the train schedule up to date, we run the render function every 10 seconds.
+    $(document).on("click", ".vote-button", function() { 
+        event.preventDefault();
+
+        var key = $(this).data("key")
+        dbItem = database.ref().orderByChild("id").equalTo(key);
+        dbItem.once("value", function(snapshot){
+            var snapshotObject = snapshot.val()
+            for (key in snapshotObject) {
+                let movie = snapshotObject[key];
+                let newVote = movie.votes + 1;
+                console.log(movie.votes)
+                database.ref().child(key).set({
+                    name: movie.name,
+                    genre: movie.genre,
+                    sellingPoint: movie.sellingPoint,
+                    votes: newVote,
+                    id: movie.id
+                })
+            }
+            render()
+        })
+    })
+
+    // In order to keep the movie schedule up to date, we run the render function every 10 seconds.
     // Because the calculations happen every time the table is rendered, the minutes left and next arrival will change whenever necessary
     setInterval(render, 10000);
 });
