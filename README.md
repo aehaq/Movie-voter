@@ -39,3 +39,4 @@ To be able to run this app in a docker environment and create a multi-user movie
   - [ ] set up couchdb image
   - [ ] fix port numbers
   - [ ] create docker-compose.yml
+  - [ ] storage volume for hoodie data and/or couchdb data
