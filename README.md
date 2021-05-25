@@ -19,6 +19,15 @@ Stop server with control + c
 Now open `index.html` in a web browser.
 
 
+## building with docker
+
+```bash
+docker build -t movie-voter .
+cd hoodie
+docker build -t movie-hoodie .
+cd ../
+```
+
 ## My Goal
 
 To be able to run this app in a docker environment and create a multi-user movie voting experience.
