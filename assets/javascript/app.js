@@ -68,7 +68,7 @@ function render(moviesObject) {
 
     // This function is run when users want to add movie information to the list.
     // It pushes the movie into the database, triggering the child added function which sprints them on the page.
-    $("#submit").on("click", function() {
+    $("#submit").on("click", function(event) {
         event.preventDefault();
         
         // Here we grab the user data from the forms on page and stores them as variables.
@@ -92,7 +92,7 @@ function render(moviesObject) {
         };
     });
 
-    $(document).on("click", ".vote-button", function() { 
+    $(document).on("click", ".vote-button", function(event) { 
         event.preventDefault();
 
         var key = $(this).data("key")
