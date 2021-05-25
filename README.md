@@ -36,3 +36,6 @@ To be able to run this app in a docker environment and create a multi-user movie
 - [ ] restrict votes to a certain number per user/device (maybe add a login system)
 - [ ] add a proper database for sharing data between users
 - [ ] Dockerize
+  - [ ] set up couchdb image
+  - [ ] fix port numbers
+  - [ ] create docker-compose.yml
