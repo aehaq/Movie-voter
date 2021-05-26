@@ -60,43 +60,43 @@ function render(moviesObject) {
 }
 
     
-    // This function calls the list movie function when a change is made to the database.
-    // When the page loads, this function is run once automatically, and filters through every single movie as though it was newly added. 
-    hoodie.on("child_added", function(snapshot) {
-        listMovies(snapshot.val());
-    });
+// This function calls the list movie function when a change is made to the database.
+// When the page loads, this function is run once automatically, and filters through every single movie as though it was newly added. 
+hoodie.on("child_added", function(snapshot) {
+    listMovies(snapshot.val());
+});
 
-    // This function is run when users want to add movie information to the list.
-    // It pushes the movie into the database, triggering the child added function which sprints them on the page.
-    $("#submit").on("click", function(event) {
-        event.preventDefault();
+// This function is run when users want to add movie information to the list.
+// It pushes the movie into the database, triggering the child added function which sprints them on the page.
+$("#submit").on("click", function(event) {
+    event.preventDefault();
+    
+    // Here we grab the user data from the forms on page and stores them as variables.
+    var name = $('#name-input').val();
+    var genre = $('#genre-input').val();
+    var sellingPoint = $('#sell-input').val();
+
+    // This if statement ensures that none of the forms were left empty.        
+    if (name != "" && genre != "" && sellingPoint != "") {
         
-        // Here we grab the user data from the forms on page and stores them as variables.
-        var name = $('#name-input').val();
-        var genre = $('#genre-input').val();
-        var sellingPoint = $('#sell-input').val();
+        //If none of the forms were empty, the data is pushed to firebase.
+        hoodie.store.add({
+            name: name,
+            genre: genre,
+            sellingPoint: sellingPoint,
+            votes: 0,
+            id: Math.floor(Math.random()*100000)
+        });
+        
+        $('.form-control').val('');
+    };
+});
 
-        // This if statement ensures that none of the forms were left empty.        
-        if (name != "" && genre != "" && sellingPoint != "") {
-            
-            //If none of the forms were empty, the data is pushed to firebase.
-            hoodie.store.add({
-                name: name,
-                genre: genre,
-                sellingPoint: sellingPoint,
-                votes: 0,
-                id: Math.floor(Math.random()*100000)
-            });
-            
-            $('.form-control').val('');
-        };
-    });
+$(document).on("click", ".vote-button", function(event) { 
+    event.preventDefault();
 
-    $(document).on("click", ".vote-button", function(event) { 
-        event.preventDefault();
-
-        var key = $(this).data("key")
-        hoodie.store.update(key, (value) => {
-            value.votes += 1
-        })
+    var key = $(this).data("key")
+    hoodie.store.update(key, (value) => {
+        value.votes += 1
     })
+})
