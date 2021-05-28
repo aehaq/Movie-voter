@@ -52,7 +52,8 @@ function generateLoginBox() {
     } else {
         console.log("not logged in")
         const inp = document.createElement("input") 
-        inp.type = "text"      
+        inp.type = "text"
+        inp.placeholder = "Enter a username"
         loginPrompt.innerHTML = '';
         loginPrompt.appendChild(inp);
 
