@@ -78,7 +78,8 @@ function listMovies(movieSnapshot) {
     var link = movieSnapshot.link;
     var votes = movieSnapshot.votes;
     var id = movieSnapshot._id;
-    var disablevote = votes.includes(getUniqueUsername())
+    
+    var disablevote = checkVoteStatus(movieSnapshot, getUniqueUsername()) != 0
 
     // We create a new row to append the information associated wth the current .
     var newRow = $('<tr>')
@@ -157,17 +158,36 @@ $(document).on("click", ".vote-button", function(event) {
     var key = $(this).data("key")
     const usn = getUniqueUsername()
     hoodie.store.find(key).then((item)=> {
-        if (!item.votes.includes(usn)) {
-            item.votes.push(usn)
-            hoodie.store.update(item)
-        } else {
-            console.log("you already voted for this")
+        switch (checkVoteStatus(item, usn)) {
+            case -1:
+                console.log("An error occurred. you are likely not logged in")
+                break;
+            case 0:
+                item.votes.push(usn)
+                hoodie.store.update(item)
+                break;
+            case 1:
+                console.log("you already voted for this")
+                break;
+            default:
+                console.log("unknown state")
         }
+        
     })
 })
 
 function movieDBSearch(term) {
     window.open("`https://www.themoviedb.org/search?query=${encodeURIComponent(term)}`");
+}
+
+function checkVoteStatus(item, username) {
+    if (username != null) {
+        return -1
+    } else if (!item.votes.includes(username)) {
+        return 0
+    } else {
+        return 1
+    }
 }
 
 setInterval(() => {
