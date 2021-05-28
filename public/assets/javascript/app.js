@@ -72,7 +72,7 @@ function generateLoginBox() {
 // This function takes a movie listed in the database, and prints it's associated info onto the table.
 function listMovies(movieSnapshot) {
     var name = movieSnapshot.name;
-    var genre = movieSnapshot.genre;
+    var link = movieSnapshot.link;
     var sellingPoint = movieSnapshot.sellingPoint;
     var votes = movieSnapshot.votes;
     var id = movieSnapshot._id;
@@ -83,17 +83,13 @@ function listMovies(movieSnapshot) {
 
     // We place the necessary information into individual cells, and append each to the new row.
     var nameCell = $('<td scope="row">')
-    nameCell.text(name);
+    const linkelem = document.createElement("a")
+    linkelem.href = link
+    linkelem.innerText = title
+    nameCell.appendChild(linkelem);
     newRow.append(nameCell);
     
-    var genreCell = $('<td scope="row">')
-    genreCell.text(genre);
-    newRow.append(genreCell);
     
-    var sellCell = $('<td scope="row">')
-    sellCell.text(sellingPoint);
-    newRow.append(sellCell);
-
     var votesCell = $('<td scope="row">')
     votesCell.text(votes.length);
     newRow.append(votesCell);
@@ -133,17 +129,15 @@ $("#submit").on("click", function(event) {
     
     // Here we grab the user data from the forms on page and stores them as variables.
     var name = $('#name-input').val();
-    var genre = $('#genre-input').val();
-    var sellingPoint = $('#sell-input').val();
+    var link = $('#link-input').val();
 
     // This if statement ensures that none of the forms were left empty.        
-    if (name != "" && genre != "" && sellingPoint != "") {
+    if (name != "" && link != "") {
         
         //If none of the forms were empty, the data is pushed to firebase.
         hoodie.store.add({
             name: name,
-            genre: genre,
-            sellingPoint: sellingPoint,
+            link: link,
             votes: [],
             id: Math.floor(Math.random()*100000)
         });
