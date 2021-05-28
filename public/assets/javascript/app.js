@@ -9,8 +9,6 @@ hoodie.account.get('session').then(function (session) {
     if (!session) {
         // user is signed out
         hoodie.account.signIn(user)
-
-
     }
 })
 
@@ -18,6 +16,7 @@ function loadAndRenderItems() {
     hoodie.store.findAll().then(render)
 }
 
+generateLoginBox()
 /* render items initially on page load */
 loadAndRenderItems()
 
@@ -26,6 +25,49 @@ hoodie.store.on('clear', function () {
     render([])
 })
 
+
+function getUniqueUsername() {
+    return localStorage.getItem('diy-username');
+}
+
+function setUniqueUsername(username) {
+    localStorage.setItem('diy-username', username);
+}
+
+
+function generateLoginBox() {
+    const loginPrompt = document.getElementById("login")
+    const loginButton = document.getElementById("login-submit")
+    const usn = getUniqueUsername()
+
+    if (usn) {
+        console.log("logged in as " + usn)
+        const p = document.createElement("p")
+        p.innerText = "Hello " + usn + "!"
+        loginPrompt.innerHTML = '';
+        loginPrompt.appendChild(p);
+        
+        // loginButton.innerText = "Log Out"
+        loginButton.style.display = "none"
+    } else {
+        console.log("not logged in")
+        const inp = document.createElement("input") 
+        inp.type = "text"      
+        loginPrompt.innerHTML = '';
+        loginPrompt.appendChild(inp);
+
+        loginButton.innerText = "Log In"
+        loginButton.style.display = "initial"
+        loginButton.onclick = () => {
+            console.log("setting username to " + inp.value)
+            setUniqueUsername(inp.value)
+            // regen page on login
+            generateLoginBox()
+            loadAndRenderItems()
+        }
+    }
+}
+
 // This function takes a movie listed in the database, and prints it's associated info onto the table.
 function listMovies(movieSnapshot) {
     var name = movieSnapshot.name;
@@ -33,6 +75,7 @@ function listMovies(movieSnapshot) {
     var sellingPoint = movieSnapshot.sellingPoint;
     var votes = movieSnapshot.votes;
     var id = movieSnapshot._id;
+    var disablevote = votes.includes(getUniqueUsername())
 
     // We create a new row to append the information associated wth the current .
     var newRow = $('<tr>')
@@ -51,11 +94,11 @@ function listMovies(movieSnapshot) {
     newRow.append(sellCell);
 
     var votesCell = $('<td scope="row">')
-    votesCell.text(votes);
+    votesCell.text(votes.length);
     newRow.append(votesCell);
     
     var castCell = $('<td scope="row">')
-    var button = $(`<button class="btn btn-success vote-button" data-key=${id}>`)
+    var button = $(`<button class="btn btn-success vote-button" data-key=${id} ${disablevote? "disabled": ""}>`)
     button.text("VOTE!")
     castCell.append(button)
     newRow.append(castCell);
@@ -100,7 +143,7 @@ $("#submit").on("click", function(event) {
             name: name,
             genre: genre,
             sellingPoint: sellingPoint,
-            votes: 0,
+            votes: [],
             id: Math.floor(Math.random()*100000)
         });
         
@@ -112,7 +155,13 @@ $(document).on("click", ".vote-button", function(event) {
     event.preventDefault();
 
     var key = $(this).data("key")
-    hoodie.store.update(key, (value) => {
-        value.votes += 1
+    const usn = getUniqueUsername()
+    hoodie.store.find(key).then((item)=> {
+        if (!item.votes.includes(usn)) {
+            item.votes.push(usn)
+            hoodie.store.update(item)
+        } else {
+            console.log("you already voted for this")
+        }
     })
 })
