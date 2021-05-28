@@ -48,10 +48,6 @@ docker build -t vote .
 To be able to run this app in a docker environment and create a multi-user movie voting experience.
 
 ### TODO's
-- [ ] restrict votes to a certain number per user/device (maybe add a login system)
-- [ ] add a proper database for sharing data between users
+- [ ] restrict votes to a certain number per user/device
 - [ ] Dockerize
-  - [ ] set up couchdb image
-  - [ ] fix port numbers
-  - [ ] create docker-compose.yml
   - [ ] storage volume for hoodie data and/or couchdb data
