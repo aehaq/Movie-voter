@@ -1,5 +1,16 @@
 version: '2.1'
 services:
+  db:
+    image: vote-db
+    ports:
+    - "5984:5984"
+    environment:
+    - COUCHDB_USER=admin
+    - COUCHDB_PASSWORD=password
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://127.0.0.1:5984/ || exit 1"]
+      interval: 10s
+      timeout: 5s
   web:
     image: movie-voter
   hoodie:
