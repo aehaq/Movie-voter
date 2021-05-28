@@ -73,7 +73,6 @@ function generateLoginBox() {
 function listMovies(movieSnapshot) {
     var name = movieSnapshot.name;
     var link = movieSnapshot.link;
-    var sellingPoint = movieSnapshot.sellingPoint;
     var votes = movieSnapshot.votes;
     var id = movieSnapshot._id;
     var disablevote = votes.includes(getUniqueUsername())
