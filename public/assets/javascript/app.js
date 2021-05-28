@@ -108,6 +108,9 @@ function listMovies(movieSnapshot) {
 function render(moviesObject) {
     // We must empty the table out since we will work through the entire database again.
     $('#movies-here').empty();
+    moviesObject.sort(function (a, b) {
+        return b.votes.length-a.votes.length;
+    });
 
     // We then iterate through the movies on the list and add each batch of information to the table
     for (key in moviesObject) {
