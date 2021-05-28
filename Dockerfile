@@ -2,8 +2,8 @@ FROM mhart/alpine-node:8
 
 WORKDIR /app
 
-ADD package.json ./app/
-ADD ./public ./app/public
+ADD package.json /app/
+ADD ./public /app/public/
 # ADD ./.hoodierc ./
 
 RUN apk add --no-cache git && npm install --production --no-optional && \
