@@ -163,3 +163,8 @@ $(document).on("click", ".vote-button", function(event) {
         }
     })
 })
+
+
+setInterval(() => {
+    hoodie.store.sync()
+}, 60000)
