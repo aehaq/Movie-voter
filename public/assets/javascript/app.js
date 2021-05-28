@@ -85,8 +85,8 @@ function listMovies(movieSnapshot) {
     var nameCell = $('<td scope="row">')
     const linkelem = document.createElement("a")
     linkelem.href = link
-    linkelem.innerText = title
-    nameCell.appendChild(linkelem);
+    linkelem.innerText = name
+    nameCell.append(linkelem);
     newRow.append(nameCell);
     
     
